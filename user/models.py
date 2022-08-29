@@ -12,7 +12,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     work_at = models.CharField(max_length=155)
     image = models.TextField()
-    username = models.CharField(max_length=255, null=True, blank=True, default="")
+    username = models.CharField(max_length=255)
 
     follow = models.ManyToManyField("user.User", through="user.Follower")
 
