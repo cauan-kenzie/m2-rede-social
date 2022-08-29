@@ -13,6 +13,7 @@ class RenderUserSerializer(serializers.ModelSerializer):
         fields = (
             "uuid",
             "email",
+            "username",
             "work_at",
             "image",
         )
@@ -69,6 +70,7 @@ class UserSerializer(serializers.ModelSerializer):
             "uuid",
             "email",
             "password",
+            "username",
             "work_at",
             "image",
             "followers",
@@ -94,6 +96,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
+    uuid = serializers.UUIDField(read_only=True)
     email = serializers.CharField(write_only=True)
     password = serializers.CharField(trim_whitespace=False, write_only=True)
     token = serializers.CharField(read_only=True)
@@ -106,6 +109,7 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg, code="authorization")
 
         attrs["user"] = user
+        attrs["uuid"] = user.uuid
         return attrs
 
 

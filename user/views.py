@@ -1,5 +1,5 @@
-from rest_framework import authentication, generics, permissions
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework import authentication, generics, permissions, response
+from rest_framework.authtoken import models, views
 
 from user.models import Follower, User
 from user.permissions import CreateUserPermission
@@ -59,10 +59,14 @@ class UnfollowUser(generics.DestroyAPIView):
 
     lookup_url_kwarg = "follow_uuid"
 
-    def perform_destroy(self, instance):
-        print(instance, "oioio")
-        return super().perform_destroy(instance)
 
-
-class Login(ObtainAuthToken):
+class Login(views.ObtainAuthToken):
     serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+        user_uuid = serializer.validated_data["uuid"]
+        token, _ = models.Token.objects.get_or_create(user=user)
+        return response.Response({"token": token.key, "user_uuid": user_uuid})
